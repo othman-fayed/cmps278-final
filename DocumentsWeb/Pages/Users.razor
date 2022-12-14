@@ -8,6 +8,10 @@
 
 <h1>Users</h1>
 
+<div class="row">
+    <div class="col-8"></div>
+    <div class="col-4 "></div>
+</div>
 <p>List of users registered on the system.</p>
 
 @if (!UserManager.Users.Any())
@@ -20,22 +24,10 @@ else
         AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                 Data="@UserManager.Users" TItem="IdentityUser" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="IdentityUser" Property="ID" Filterable="false" Title="ID" Frozen="true" Width="80px"
-                TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="TitleOfCourtesy" Title="Title" Width="120px" />
             <RadzenDataGridColumn TItem="IdentityUser" Property="FirstName" Title="First Name" Frozen="true" Width="160px" />
             <RadzenDataGridColumn TItem="IdentityUser" Property="LastName" Title="Last Name" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Title" Title="Job Title" Width="200px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="TitleOfCourtesy" Title="Title" Width="120px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="BirthDate" Title="Birth Date" FormatString="{0:d}" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="HireDate" Title="Hire Date" FormatString="{0:d}" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Address" Title="Address" Width="200px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="City" Title="City" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Region" Title="Region" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="PostalCode" Title="Postal Code" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Country" Title="Country" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="HomePhone" Title="Home Phone" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Extension" Title="Extension" Width="160px" />
-            <RadzenDataGridColumn TItem="IdentityUser" Property="Notes" Title="Notes" Width="300px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Email" Title="Email" Width="200px" />
         </Columns>
     </RadzenDataGrid>
 }

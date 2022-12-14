@@ -6,5 +6,10 @@ namespace DocumentsWeb.Data.Entities
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+
+        /// <summary>
+        /// Mr, Ms, Mrs
+        /// </summary>
+        public string? TitleOfCourtesy { get; set; }
     }
 }
