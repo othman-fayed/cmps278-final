@@ -1,0 +1,48 @@
+﻿@page "/users"
+@using DocumentsWeb.Data
+@using Microsoft.AspNetCore.Identity
+@using Radzen
+@using Radzen.Blazor
+
+@inject UserManager<IdentityUser> UserManager
+
+<h1>Users</h1>
+
+<p>List of users registered on the system.</p>
+
+@if (!UserManager.Users.Any())
+{
+    <div class="alert alert-danger">No users are currently registered</div>
+}
+else
+{
+    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+        AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@UserManager.Users" TItem="IdentityUser" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="IdentityUser" Property="ID" Filterable="false" Title="ID" Frozen="true" Width="80px"
+                TextAlign="TextAlign.Center" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="FirstName" Title="First Name" Frozen="true" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="LastName" Title="Last Name" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Title" Title="Job Title" Width="200px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="TitleOfCourtesy" Title="Title" Width="120px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="BirthDate" Title="Birth Date" FormatString="{0:d}" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="HireDate" Title="Hire Date" FormatString="{0:d}" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Address" Title="Address" Width="200px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="City" Title="City" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Region" Title="Region" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="PostalCode" Title="Postal Code" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Country" Title="Country" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="HomePhone" Title="Home Phone" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Extension" Title="Extension" Width="160px" />
+            <RadzenDataGridColumn TItem="IdentityUser" Property="Notes" Title="Notes" Width="300px" />
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+}
