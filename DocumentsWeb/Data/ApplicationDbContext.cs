@@ -38,11 +38,15 @@ namespace DocumentsWeb.Data
                 FirstName = "Osman",
                 LastName = "Fayed",
                 UserName = "omf02@aub.edu.lb",
+                EmailConfirmed = true,
             };
             admin.NormalizedUserName = admin.UserName.ToUpperInvariant();
             admin.Email = admin.UserName;
-
             admin.NormalizedEmail = admin.NormalizedUserName;
+
+            //set user password
+            PasswordHasher<User> ph = new PasswordHasher<User>();
+            admin.PasswordHash = ph.HashPassword(admin, "Pass123$");
 
             modelBuilder.Entity<User>().HasData(admin);
 
