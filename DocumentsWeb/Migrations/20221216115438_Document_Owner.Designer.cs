@@ -3,6 +3,7 @@ using System;
 using DocumentsWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DocumentsWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221216115438_Document_Owner")]
+    partial class DocumentOwner
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -23,18 +26,9 @@ namespace DocumentsWeb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("Approved")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(2147483647)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Modified")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -42,11 +36,7 @@ namespace DocumentsWeb.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
 
                     b.Property<int>("WorkflowId")
                         .HasColumnType("INTEGER");
@@ -137,7 +127,7 @@ namespace DocumentsWeb.Migrations
                         {
                             Id = "admin",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0d95180f-9445-484e-b01c-dace1d54e857",
+                            ConcurrencyStamp = "17e4d5fd-da6e-406e-a1b4-6a6f4db76720",
                             Email = "omf02@aub.edu.lb",
                             EmailConfirmed = true,
                             FirstName = "Osman",
@@ -145,9 +135,9 @@ namespace DocumentsWeb.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "OMF02@AUB.EDU.LB",
                             NormalizedUserName = "OMF02@AUB.EDU.LB",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKMeL/cdVDkf6rAxkJtbmfRkQYUkgcw8ELaWN/c3Lwdz1+pxm3jLwTwzNKx5YQcsig==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGlo6LYg+wU4KLFmwqpXrYVh9iMvblWtZCOJRnXd2Ur9XqjdeCYpawfY1mBZu3vMqA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b354fb26-e20b-4f23-b10b-564764de11aa",
+                            SecurityStamp = "c22dd4eb-7e85-4d06-8889-2641bd307adc",
                             TwoFactorEnabled = false,
                             UserName = "omf02@aub.edu.lb"
                         });
@@ -166,13 +156,6 @@ namespace DocumentsWeb.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Workflows");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Default"
-                        });
                 });
 
             modelBuilder.Entity("DocumentsWeb.Data.Entities.WorkflowStep", b =>
@@ -190,7 +173,7 @@ namespace DocumentsWeb.Migrations
                     b.Property<string>("Value")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("WorkflowId")
+                    b.Property<int?>("WorkflowId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -198,16 +181,6 @@ namespace DocumentsWeb.Migrations
                     b.HasIndex("WorkflowId");
 
                     b.ToTable("WorkflowStep");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Action = 1,
-                            Order = 1,
-                            Value = "*",
-                            WorkflowId = 1
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -379,9 +352,7 @@ namespace DocumentsWeb.Migrations
                 {
                     b.HasOne("DocumentsWeb.Data.Entities.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("DocumentsWeb.Data.Entities.Workflow", "Workflow")
                         .WithMany()
@@ -396,13 +367,9 @@ namespace DocumentsWeb.Migrations
 
             modelBuilder.Entity("DocumentsWeb.Data.Entities.WorkflowStep", b =>
                 {
-                    b.HasOne("DocumentsWeb.Data.Entities.Workflow", "Workflow")
+                    b.HasOne("DocumentsWeb.Data.Entities.Workflow", null)
                         .WithMany("Steps")
-                        .HasForeignKey("WorkflowId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Workflow");
+                        .HasForeignKey("WorkflowId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

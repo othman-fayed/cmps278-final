@@ -1,0 +1,104 @@
+﻿@page "/documents/{id}"
+@using Microsoft.Extensions.Logging
+@inject ILogger<Edit> Logger
+@attribute [Authorize(Roles = DocumentsWeb.RoleNames.Approved)]
+
+@inject DocumentsRepo Repo
+@inject WorkflowsRepo WorkflowRepo
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if (notFound)
+{
+    <div class="alert alert-danger">Document not found!</div>
+}
+else if (document == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h3>Edit your document</h3>
+
+    <EditForm Model="@document" OnValidSubmit="async () => await HandleValidSubmitAsync()">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="row">
+            <div class="col">
+                <div class="mb-3">
+                    <label class="form-label">
+                        Document Name:
+                        <InputText @bind-Value="document.Name" class="form-control" disabled="@(!canEdit)" />
+                    </label>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    <label class="form-label">
+                        Workflow:
+                        <InputSelect @bind-Value="document.WorkflowId" class="form-control" disabled="@(!canEdit)">
+                            @foreach (var wrkflw in workflows)
+                            {
+                                <option value=@wrkflw.Id>@wrkflw.Name</option>
+                            }
+                        </InputSelect>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <TinyMCE.Blazor.Editor @bind-Value="document.Content" Field="() => document.Content" Disable=@(document.Id != 0 && document.OwnerId != currentUserId)
+                           ApiKey="6e3vx46jzrha3mnazx36z2ag89nka5b707wtu1s3ustv7nbv" />
+
+        @if (canEdit)
+        {
+            <button type="submit" class="btn btn-primary">Submit</button>
+        }
+    </EditForm>
+}
+
+@code {
+
+    [Parameter]
+    public string? Id { get; set; }
+
+    private IEnumerable<Workflow> workflows = new List<Workflow>();
+    private Document document;
+    private bool notFound;
+    private string currentUserId;
+    private bool canEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        currentUserId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        workflows = await WorkflowRepo.GetAsync();
+        if (Id?.ToLower() == "new")
+        {
+            document = new Document();
+            canEdit = true;
+        }
+        else
+        {
+            var intId = int.Parse(Id);
+            document = await Repo.GetAsync(intId);
+            notFound = document == null;
+            canEdit = !notFound && document.OwnerId == currentUserId;
+        }
+    }
+
+    private async Task HandleValidSubmitAsync()
+    {
+        Logger.LogInformation("HandleValidSubmit called");
+
+        // Process the valid form
+
+        if (string.IsNullOrEmpty(document.OwnerId))
+        {
+            document.OwnerId = currentUserId;
+        }
+
+        await Repo.SaveAsync(document);
+    }
+}

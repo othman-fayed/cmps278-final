@@ -11,7 +11,7 @@ namespace DocumentsWeb.Data
         public DbSet<Workflow> Workflows { get; set; }
 
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -30,10 +30,10 @@ namespace DocumentsWeb.Data
             //seed roles
             var seedRoles = new List<IdentityRole>
             {
-                new IdentityRole("Admin") { Id = "admin" },
-                new IdentityRole("Writer") { Id = "writer" },
-                new IdentityRole("Reviewer") { Id = "reviewer" },
-                new IdentityRole("Approved") { Id = "approved" },
+                new IdentityRole("Admin") { Id = "admin", NormalizedName = "admin".ToUpper()  },
+                new IdentityRole("Writer") { Id = "writer", NormalizedName = "writer".ToUpper() },
+                new IdentityRole("Reviewer") { Id = "reviewer", NormalizedName = "reviewer".ToUpper() },
+                new IdentityRole("Approved") { Id = "approved", NormalizedName = "approved".ToUpper() },
             };
             modelBuilder.Entity<IdentityRole>().HasData(seedRoles);
 
@@ -62,7 +62,20 @@ namespace DocumentsWeb.Data
             };
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(adminRole);
 
-
+            var defaultWorkflow = new Workflow
+            {
+                Id = 1,
+                Name = "Default",
+            };
+            modelBuilder.Entity<Workflow>().HasData(defaultWorkflow);
+            modelBuilder.Entity<WorkflowStep>().HasData(new WorkflowStep
+            {
+                Id = 1,
+                Order = 1,
+                Action = WorkflowAction.AddReviewer,
+                Value = "*",
+                WorkflowId = defaultWorkflow.Id
+            });
         }
     }
 }

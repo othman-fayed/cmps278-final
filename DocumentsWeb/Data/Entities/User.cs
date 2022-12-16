@@ -11,5 +11,10 @@ namespace DocumentsWeb.Data.Entities
         /// Mr, Ms, Mrs
         /// </summary>
         public string? TitleOfCourtesy { get; set; }
+
+        public override string ToString()
+        {
+            return $"{FirstName} {LastName}" ?? base.ToString();
+        }
     }
 }

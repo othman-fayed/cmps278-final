@@ -15,7 +15,7 @@
 
     </div>
     <div class="col-4 text-end d-flex flex-column align-items-end justify-content-around">
-        <a class="btn btn-primary" href="~/Account/AddUser">Add User</a>
+        <a class="btn btn-primary" href="Identity/Account/AddUser">Add User</a>
     </div>
 </div>
 
@@ -25,21 +25,31 @@
 }
 else
 {
-    <RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+    <RadzenDataGrid @ref="grid"
+                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
                 AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
                 Data="@UsersList" TItem="DTO" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
         <Columns>
-            <RadzenDataGridColumn TItem="DTO" Property="Item1.TitleOfCourtesy" Title="Title" Width="120px" />
-            <RadzenDataGridColumn TItem="DTO" Property="Item1.FirstName" Title="First Name" Frozen="true" Width="160px" />
-            <RadzenDataGridColumn TItem="DTO" Property="Item1.LastName" Title="Last Name" Width="160px" />
-            <RadzenDataGridColumn TItem="DTO" Property="Item1.Email" Title="Email" Width="200px" />
-            <RadzenDataGridColumn TItem="DTO" Property="Item2" Title="Role" Width="200px" />
-            <RadzenDataGridColumn TItem="DTO" Property="Item1.Id" Title="" Width="120px">
-
+            <RadzenDataGridColumn TItem="DTO" Property="User.TitleOfCourtesy" Title="Title" Width="90px" />
+            <RadzenDataGridColumn TItem="DTO" Property="User.FirstName" Title="First Name" Frozen="true" Width="160px" />
+            <RadzenDataGridColumn TItem="DTO" Property="User.LastName" Title="Last Name" Width="160px" />
+            <RadzenDataGridColumn TItem="DTO" Property="User.Email" Title="Email" Width="200px" />
+            <RadzenDataGridColumn TItem="DTO" Property="User.EmailConfirmed" Title="Email Confirmed" Width="120px" />
+            <RadzenDataGridColumn TItem="DTO" Property="Roles" Title="Role" Width="160px" />
+            <RadzenDataGridColumn TItem="DTO" Property="User.Id" Title="" Width="200px" Sortable="false" Filterable="false">
                 <Template Context="data">
-                    <button class="btn btn-danger" onclick="@(async () => await DeleteUserAsync(data.Item1))">
-                        Delete
-                    </button>
+                    @if (!data.Roles.Contains("Approved"))
+                    {
+                        <button class="btn btn-success" onclick="@(async () => await ApproveUserAsync(data.User))">
+                            Approve
+                        </button>
+                    }
+                    @if (!data.Roles.Contains("Admin"))
+                    {
+                        <button class="btn btn-danger" onclick="@(async () => await DeleteUserAsync(data.User))">
+                            Delete
+                        </button>
+                    }
                 </Template>
             </RadzenDataGridColumn>
         </Columns>
@@ -50,10 +60,11 @@ else
 
     public class DTO
     {
-        public User Item1 { get; set; }
-        public string Item2 { get; set; }
+        public User User { get; set; }
+        public string Roles { get; set; }
     }
 
+    private RadzenDataGrid<DTO>? grid;
     private IList<DTO> UsersList { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -67,11 +78,21 @@ else
         var users = await UserManager.Users.ToListAsync();
         foreach (var u in users)
         {
-            var roles = await UserManager.GetRolesAsync(u);
-            UsersList.Add(new DTO { Item1 = u, Item2 = (string.Join(",", roles) ?? "-") });
+            var roles = (await UserManager.GetRolesAsync(u)).OrderBy(x => x);
+            //roles = roles.Where(rr => rr != "Approved").ToList();
+            UsersList.Add(new DTO { User = u, Roles = (string.Join(", ", roles) ?? "-") });
         }
     }
 
+    private async Task ApproveUserAsync(User user)
+    {
+        await UserManager.AddToRoleAsync(user, "Approved");
+        await LoadAsync();
+        if (grid is not null)
+        {
+            await grid.Reload();
+        }
+    }
 
     private async Task DeleteUserAsync(User user)
     {
@@ -84,6 +105,11 @@ else
         {
             await UserManager.DeleteAsync(user);
             await LoadAsync();
+
+            if (grid is not null)
+            {
+                await grid.Reload();
+            }
         }
     }
 }

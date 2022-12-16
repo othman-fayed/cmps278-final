@@ -1,0 +1,93 @@
+﻿@page "/documents"
+@using DocumentsWeb.Data
+@using Microsoft.AspNetCore.Identity
+@using Radzen
+@using Radzen.Blazor
+@using Microsoft.EntityFrameworkCore
+@attribute [Authorize(Roles = DocumentsWeb.RoleNames.Approved)]
+
+@inject DocumentsRepo Repo
+@inject UserManager<User> UserManager
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+
+
+<div class="row">
+    <div class="col-8">
+        <h1>Documents</h1>
+        <p>Documents that you have access to on the system.</p>
+
+    </div>
+    @if (CanAdd)
+    {
+        <div class="col-4 text-end d-flex flex-column align-items-end justify-content-around">
+            <a class="btn btn-primary" href="documents/new">Add new document</a>
+        </div>
+    }
+</div>
+
+@if (!List.Any())
+{
+    <div class="alert alert-danger">No documents were found</div>
+}
+else
+{
+    <RadzenDataGrid @ref="grid"
+                AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced"
+                AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@List" TItem="Document" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+        <Columns>
+            <RadzenDataGridColumn TItem="Document" Property="Name" Title="Name" Width="120px" />
+            <RadzenDataGridColumn TItem="Document" Property="Owner" Title="Owner" Frozen="true" Width="160px" />
+            <RadzenDataGridColumn TItem="Document" Property="Status" Title="Status" Frozen="true" Width="160px" />
+            <RadzenDataGridColumn TItem="Document" Property="Name" Title="" Width="200px" Sortable="false" Filterable="false">
+                <Template Context="data">
+                    <a class="btn btn-primary" href="/documents/@data.Id">
+                        View\Edit
+                    </a>
+
+                    <button class="btn btn-danger" onclick="@(async () => await DeleteAsync(data))">
+                        Delete
+                    </button>
+
+                </Template>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+}
+
+@code {
+    public bool CanAdd { get; set; }
+
+    private RadzenDataGrid<Document>? grid;
+    private IEnumerable<Document> List { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var id = authstate.User.FindFirst(u => u.Type.Contains("nameidentifier"))?.Value;
+
+        if (authstate.User.IsInRole(RoleNames.Reviewer) || authstate.User.IsInRole(RoleNames.Admin))
+        {
+            List = await Repo.GetAsync();
+        }
+        else
+        {
+            CanAdd = true;
+            List = await Repo.GetByOwnerAsync(id);
+        }
+    }
+
+    private async Task DeleteAsync(Document doc)
+    {
+        await Repo.DeleteAsync(doc);
+        if (grid is not null)
+        {
+            await grid.Reload();
+        }
+    }
+}

@@ -3,6 +3,7 @@ using System;
 using DocumentsWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DocumentsWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221216124219_WorkflowSeed")]
+    partial class WorkflowSeed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -23,7 +26,7 @@ namespace DocumentsWeb.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("Approved")
+                    b.Property<DateTime>("Approved")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
@@ -42,7 +45,6 @@ namespace DocumentsWeb.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
@@ -137,7 +139,7 @@ namespace DocumentsWeb.Migrations
                         {
                             Id = "admin",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0d95180f-9445-484e-b01c-dace1d54e857",
+                            ConcurrencyStamp = "b47cb79a-2e5a-4027-9763-5c80ab612179",
                             Email = "omf02@aub.edu.lb",
                             EmailConfirmed = true,
                             FirstName = "Osman",
@@ -145,9 +147,9 @@ namespace DocumentsWeb.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "OMF02@AUB.EDU.LB",
                             NormalizedUserName = "OMF02@AUB.EDU.LB",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKMeL/cdVDkf6rAxkJtbmfRkQYUkgcw8ELaWN/c3Lwdz1+pxm3jLwTwzNKx5YQcsig==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPXSJxStB1Q1BumQ9PFQxEQ8S+lEkqdAzZujQe1nYbEeB8RqkEp3w/s4veb9ib0edg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "b354fb26-e20b-4f23-b10b-564764de11aa",
+                            SecurityStamp = "2a92e231-ccf4-4ecf-a4b4-da0ad97f4561",
                             TwoFactorEnabled = false,
                             UserName = "omf02@aub.edu.lb"
                         });
@@ -379,9 +381,7 @@ namespace DocumentsWeb.Migrations
                 {
                     b.HasOne("DocumentsWeb.Data.Entities.User", "Owner")
                         .WithMany()
-                        .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("OwnerId");
 
                     b.HasOne("DocumentsWeb.Data.Entities.Workflow", "Workflow")
                         .WithMany()

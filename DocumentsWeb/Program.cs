@@ -1,6 +1,7 @@
 using DocumentsWeb.Areas.Identity;
 using DocumentsWeb.Data;
 using DocumentsWeb.Data.Entities;
+using DocumentsWeb.Data.Repos;
 using DocumentsWeb.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -28,9 +29,11 @@ builder.Services
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
 // Services
 builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<DocumentsRepo>();
+builder.Services.AddScoped<WorkflowsRepo>();
+
 
 var app = builder.Build();
 

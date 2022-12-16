@@ -131,6 +131,7 @@ namespace DocumentsWeb.Areas.Identity.Pages.Account
                 var user = CreateUser();
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
+                user.UserName = user.ToString();
                 user.TitleOfCourtesy = Input.TitleOfCourtesy;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
@@ -142,6 +143,9 @@ namespace DocumentsWeb.Areas.Identity.Pages.Account
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
+
+                    await _userManager.AddToRoleAsync(user, Input.Role);
+
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

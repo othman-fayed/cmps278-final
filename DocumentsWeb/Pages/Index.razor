@@ -1,41 +1,71 @@
 ﻿@page "/"
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Documents Approval System</PageTitle>
-
 <div class="text-center">
     <h1>Welcome to Documents Approval System</h1>
     <p>This app allows documents to be created, reviewed and processed online.</p>
 </div>
+<AuthorizeView>
+    <Authorized>
+        @if (IsApproved == false)
+        {
+            <div class="alert alert-danger">Your access have NOT been approved yet by admin! Access to documents is not allowed yet!</div>
+        }
+    </Authorized>
+</AuthorizeView>
 <br />
 <br />
 
 <div class="d-flex justify-content-center">
     <div class="d-flex flex-column">
-        <div>
-            <h3>Writer Role</h3>
-            <ul>
-                <li>Create new documents</li>
-                <li>Modify existing documents</li>
-                <li>Push documents for approval</li>
-                <li>Publish documents as final</li>
-            </ul>
-        </div><div>
-            <h3>Reviewer Role</h3>
-            <ul>
-                <li>Approve\Reject document</li>
-                <li>Add comments to document</li>
-                <li>Receive notification when a document requires your attention</li>
-            </ul>
-        </div>
+        <AuthorizeView>
+            <Authorized>
+                <h2>You are registered as a @Role</h2>
+            </Authorized>
+            <NotAuthorized>
+                <div>
+                    <h3>Writer Role</h3>
+                    <ul>
+                        <li>Create new documents</li>
+                        <li>Modify existing documents</li>
+                        <li>Push documents for approval</li>
+                        <li>Publish documents as final</li>
+                    </ul>
+                </div><div>
+                    <h3>Reviewer Role</h3>
+                    <ul>
+                        <li>Approve\Reject document</li>
+                        <li>Add comments to document</li>
+                        <li>Receive notification when a document requires your attention</li>
+                    </ul>
+                </div>
+
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 </div>
 @code {
 
-    // Gets a reference to the MainLayout component
-    [CascadingParameter]
-    public MainLayout Layout { get; set; }
+    private bool IsApproved { get; set; }
+    private string Role { get; set; }
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        IsApproved = authState.User.IsInRole(RoleNames.Approved);
+        Role = "";
+        if (authState.User.IsInRole(RoleNames.Writer))
+        {
+            Role = "Writer";
+        }
+        else if (authState.User.IsInRole(RoleNames.Reviewer))
+        {
+            Role = "Reviewer";
+        }
+        else
+        {
+            Role = "Administrator";
+        }
     }
 }
