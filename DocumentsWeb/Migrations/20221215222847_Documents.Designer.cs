@@ -3,6 +3,7 @@ using System;
 using DocumentsWeb.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DocumentsWeb.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221215222847_Documents")]
+    partial class Documents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -119,7 +122,7 @@ namespace DocumentsWeb.Migrations
                         {
                             Id = "admin",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ab45391f-f8bc-4215-ac01-6fde6fdb1dc6",
+                            ConcurrencyStamp = "d2c91df8-c2b6-44d7-b746-fcdfbea69cf7",
                             Email = "omf02@aub.edu.lb",
                             EmailConfirmed = true,
                             FirstName = "Osman",
@@ -127,9 +130,9 @@ namespace DocumentsWeb.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "OMF02@AUB.EDU.LB",
                             NormalizedUserName = "OMF02@AUB.EDU.LB",
-                            PasswordHash = "AQAAAAIAAYagAAAAENoMmYKNQ3m7GzmGv1DUVFOWRJTW40kxWGrpEpfveCR4Dl+yfJKNv/nSsMwUXndhlQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFdc/61aO7sbQ7Oa1k6wcttumBGKNfDBrOsK/J+6T0dmAVj7vk2dAqmo29mr/xMZOg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "fe805091-6d5b-4544-84d3-26dccaed77d9",
+                            SecurityStamp = "a6ba7039-a5c7-4b92-8c6b-99a7b63610d3",
                             TwoFactorEnabled = false,
                             UserName = "omf02@aub.edu.lb"
                         });
@@ -215,11 +218,6 @@ namespace DocumentsWeb.Migrations
                         {
                             Id = "reviewer",
                             Name = "Reviewer"
-                        },
-                        new
-                        {
-                            Id = "approved",
-                            Name = "Approved"
                         });
                 });
 

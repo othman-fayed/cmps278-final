@@ -7,7 +7,11 @@ namespace DocumentsWeb.Data
 {
     public class ApplicationDbContext : IdentityDbContext<User>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<Workflow> Workflows { get; set; }
+
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
         }
@@ -29,6 +33,7 @@ namespace DocumentsWeb.Data
                 new IdentityRole("Admin") { Id = "admin" },
                 new IdentityRole("Writer") { Id = "writer" },
                 new IdentityRole("Reviewer") { Id = "reviewer" },
+                new IdentityRole("Approved") { Id = "approved" },
             };
             modelBuilder.Entity<IdentityRole>().HasData(seedRoles);
 
